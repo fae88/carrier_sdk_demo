@@ -18,7 +18,7 @@ public class BillQueryService {
      * @param account
      */
     public static String getBasicRecord(String task_id, String account){
-        Map<String,String> map = WebUtils.doGet(Constants.BASEURL + "/mobiles/" + account +"/basic", "task_id=" + task_id, false);
+        Map<String,String> map = WebUtils.doGet(Constants.BASEURL + "/mobiles/" + account +"/basic", "task_id=" + task_id, false, true);
 
         return WebUtils.handleMap(map);
     }
@@ -34,7 +34,7 @@ public class BillQueryService {
      */
     public static String getBillRecord(String task_id, String from_month, String to_month, String account){
         Map<String,String> map = WebUtils.doGet(Constants.BASEURL + "/mobiles/" + account +"/bill",
-                "task_id=" + task_id + "&from_month=" + from_month + "&to_month=" + to_month, false);
+                "task_id=" + task_id + "&from_month=" + from_month + "&to_month=" + to_month, false,true);
 
         return WebUtils.handleMap(map);
 
@@ -49,7 +49,7 @@ public class BillQueryService {
      */
     public static String getCallDetailed(String task_id, String month, String account){
         Map<String,String> map = WebUtils.doGet(Constants.BASEURL + "/mobiles/" + account +"/call",
-                "task_id=" + task_id + "&month=" + month , false);
+                "task_id=" + task_id + "&month=" + month , false, true);
 
         return WebUtils.handleMap(map);
     }
@@ -63,7 +63,7 @@ public class BillQueryService {
      */
     public  static String getSMSDetailed(String task_id, String month, String account){
         Map<String,String> map = WebUtils.doGet(Constants.BASEURL + "/mobiles/" + account +"/sms",
-                "task_id=" + task_id + "&month=" + month , false);
+                "task_id=" + task_id + "&month=" + month , false, true);
 
         return WebUtils.handleMap(map);
     }
@@ -76,7 +76,7 @@ public class BillQueryService {
      */
     public static String getMXData(String task_id, String account){
         Map<String,String> map = WebUtils.doGet(Constants.BASEURL + "/mobiles/" + account +"/mxdata",
-                "task_id=" + task_id , false);
+                "task_id=" + task_id , false, true);
 
         return WebUtils.handleMap(map);
     }
