@@ -51,7 +51,7 @@ public class TaskCreateService {
         Map<String, String> map = new HashMap<String, String>();
         boolean isTaskDone = false;
         while(true){
-            map =  WebUtils.doGet(Constants.BASEURL + "/tasks/" + task_id +"/status", "", true);
+            map =  WebUtils.doGet(Constants.BASEURL + "/tasks/" + task_id +"/status", "", true, false);
             int statusCode = Integer.parseInt(map.get("httpStatusCode"));
             if(statusCode>=200 && statusCode<300) {
 
@@ -79,10 +79,10 @@ public class TaskCreateService {
                 if (phaseStatus.equals("WAIT_CODE")) {
                     String inputType = (String) result_json.get("type");
                     System.out.println("等待用户输入,类型:" + inputType);
-                    if (inputType.equalsIgnoreCase("img")) {
-                        System.out.println("base64在线转图片,访问 http://codebeautify.org/base64-to-image-converter");
-                        System.out.println("请识别图片验证码:" + (String) result_json.get("value"));
-                    }
+//                    if (inputType.equalsIgnoreCase("img")) {
+//                        System.out.println("base64在线转图片,访问 http://codebeautify.org/base64-to-image-converter");
+//                        System.out.println("请识别图片验证码:" + (String) result_json.get("value"));
+//                    }
                     System.out.print("请输入验证码:");
                     Scanner scanner = new Scanner(System.in);
                     String result = scanner.nextLine();

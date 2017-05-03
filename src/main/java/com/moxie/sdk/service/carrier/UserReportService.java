@@ -17,7 +17,7 @@ public class UserReportService {
      * @return
      */
     public static String getUserReport(String account){
-        Map<String, String> map = WebUtils.doGet(Constants.BASEURL + "/mobiles/" + account +"/report", "", false);
+        Map<String, String> map = WebUtils.doGet(Constants.BASEURL + "/mobiles/" + account +"/report", "", false, true);
         return WebUtils.handleMap(map);
     }
 

@@ -30,9 +30,13 @@ public class WebUtils {
      *            发送请求的URL
      * @param param
      *            请求参数，请求参数应该是name1=value1&name2=value2的形式。
+     * @param isApiKey
+     *            请求通过何种认证：apikey，token
+     * @param isGzip
+     *            返回的流是否压缩
      * @return URL所代表远程资源的响应
      */
-    public static Map<String,String> doGet(String url, String param, boolean isApiKey) {
+    public static Map<String,String> doGet(String url, String param, boolean isApiKey, boolean isGzip) {
         String result = "";
         BufferedReader in = null;
         try {
@@ -44,29 +48,29 @@ public class WebUtils {
             // 设置通用的请求属性
             httpURLConnection.setRequestProperty("user-agent",Constants.USER_AGENT);
             httpURLConnection.setRequestProperty("content-type", Constants.CONTENT_TYPE);
+//            httpURLConnection.setRequestProperty("Accept-Encoding","none");
+            httpURLConnection.setRequestProperty("Accept-Encoding", "gzip,deflate,sdch");
             if(isApiKey)
                 httpURLConnection.setRequestProperty("Authorization", Constants.APIKEY);
             else
                 httpURLConnection.setRequestProperty("Authorization", Constants.TOKEN);
             // 建立实际的连接
             httpURLConnection.connect();
-            // 获取所有响应头字段
-//            Map<String, List<String>> map = conn.getHeaderFields();
-//            // 遍历所有的响应头字段
-//            for (String key : map.keySet()) {
-//                System.out.println(key + "--->" + map.get(key));
-//            }
             // 定义BufferedReader输入流来读取URL的响应
             map.put("httpStatusCode", String.valueOf(httpURLConnection.getResponseCode()));
             map.put("httpStatusMsg", httpURLConnection.getResponseMessage());
-            in = new BufferedReader(
-                    new InputStreamReader(httpURLConnection.getInputStream(),"UTF-8"));
-//            String line = new String("".getBytes(), "UTF-8");
 
-            String line = "";
+            if(isGzip)
+                result = GzipUtil.uncompress(httpURLConnection.getInputStream());
+            else{
+                in = new BufferedReader(
+                        new InputStreamReader(httpURLConnection.getInputStream(),"UTF-8"));
 
-            while ((line = in.readLine()) != null) {
-                result += line;
+                String line = "";
+
+                while ((line = in.readLine()) != null) {
+                    result += line;
+                }
             }
         } catch (Exception e) {
             System.out.println("发送GET请求出现异常！" + e);
@@ -126,6 +130,7 @@ public class WebUtils {
             while ((line = in.readLine()) != null) {
                 result += line;
             }
+//            result = GzipUtil.uncompress(httpURLConnection.getInputStream());
         } catch (Exception e) {
             System.out.println("发送POST请求出现异常！" + e);
             e.printStackTrace();

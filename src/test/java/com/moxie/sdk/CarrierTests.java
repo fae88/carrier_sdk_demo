@@ -23,14 +23,14 @@ public class CarrierTests {
     public static void main(String[] args) {
 //        //测试任务创建验证
 //        testTaskCreateService();
-//
+
 //        //测试重置密码
 //        testResetPasswordService();
 //
 //        //测试账单查询
-//        testBillQueryService();
+        testBillQueryService();
 //
-//        //测试用户报告
+        //测试用户报告
 //        testUserReportService();
     }
 
