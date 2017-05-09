@@ -1,11 +1,9 @@
 package com.moxie.sdk.service.carrier;
 
-import com.moxie.sdk.common.Constants;
-import com.moxie.sdk.common.WebUtils;
+import com.moxie.sdk.common.MoxieWebUtils;
 import com.moxie.sdk.entity.Account;
+import com.moxie.sdk.entity.MoxieResponse;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -21,12 +19,21 @@ public class ResetPasswordService {
      * @return
      */
     public static String getResetTask(Account account){
-        Map<String, String> map = WebUtils.doPost(Constants.BASEURL + "/tasks/reset",
+        MoxieResponse response = MoxieWebUtils.doPost("https://api.51datakey.com/carrier/v3/tasks/reset",
                 "{\"account\":\"" + account.getAccount() + "\"," +
                         "\"user_id\":\"" + account.getUserId() + "\"," +
                         "\"real_name\":\"" + account.getRealName() +"\"," +
                         "\"id_card\":\"" + account.getIdCard() + "\"}");
-        return WebUtils.handleMap(map);
+        //通过response判断服务是否执行成功
+        if(response.getHttpStatusCode()>=200 && response.getHttpStatusCode()<300){
+            //服务正常，返回正常报文，并处理业务逻辑
+            System.out.println("创建修改密码任务成功！");
+            return response.getResult();
+        }else{
+            //异常情况，返回异常信息，并重新引导发起请求
+            System.out.println("服务执行失败，请重新发送请求，错误信息: " + response.getHttpStatusMsg());
+            return response.getHttpStatusCode() + ", " + response.getHttpStatusMsg();
+        }
     }
 
 
@@ -39,14 +46,14 @@ public class ResetPasswordService {
      */
     public static String validateSMS(String taskId, String newPassWord){
         long pollEndTime = System.currentTimeMillis() + 180 * 1000;
-        Map<String, String> map = new HashMap<String, String>();
         boolean isTaskDone = false;
+        MoxieResponse response = new MoxieResponse();
         String result = "";
         System.out.println("请输入验证码：");
         Scanner scanner = new Scanner(System.in);
         String validateSMS = scanner.next();
         if(validateSMS != null){
-            map = WebUtils.doPost(Constants.BASEURL + "/tasks/reset/" + taskId + "/input",
+            response = MoxieWebUtils.doPost("https://api.51datakey.com/carrier/v3/tasks/reset/" + taskId + "/input",
                     "{" +
                             "  \"inputs\": [" +
                             "     {" +
@@ -61,8 +68,15 @@ public class ResetPasswordService {
                             "}");
         }
 
-        return WebUtils.handleMap(map);
-//        result = map.get("result");
-
+        //通过response判断服务是否执行成功
+        if(response.getHttpStatusCode()>=200 && response.getHttpStatusCode()<300){
+            //服务正常，返回正常报文，并处理业务逻辑
+            System.out.println("密码重置成功！");
+            return response.getResult();
+        }else{
+            //异常情况，返回异常信息，并重新引导发起请求
+            System.out.println("服务执行失败，请重新发送请求，错误信息: " + response.getHttpStatusMsg());
+            return response.getHttpStatusCode() + ", " + response.getHttpStatusMsg();
+        }
     }
 }

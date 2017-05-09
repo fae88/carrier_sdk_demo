@@ -7,7 +7,6 @@ import com.moxie.sdk.service.carrier.BillQueryService;
 import com.moxie.sdk.service.carrier.ResetPasswordService;
 import com.moxie.sdk.service.carrier.TaskCreateService;
 import com.moxie.sdk.service.carrier.UserReportService;
-import org.junit.Test;
 import test_data.TestDataConstants;
 
 import java.io.IOException;
@@ -25,10 +24,10 @@ public class CarrierTests {
 //        testTaskCreateService();
 
 //        //测试重置密码
-//        testResetPasswordService();
+        testResetPasswordService();
 //
 //        //测试账单查询
-        testBillQueryService();
+//        testBillQueryService();
 //
         //测试用户报告
 //        testUserReportService();
@@ -36,30 +35,26 @@ public class CarrierTests {
 
 
     public static void testTaskCreateService(){
-        try {
-            //测试运营商可用渠道
-            String channels = TaskCreateService.getCarrierChannels(TestDataConstants.account);
-            System.out.println(channels);
+        //测试运营商可用渠道
+        String channels = TaskCreateService.getCarrierChannels(TestDataConstants.account);
+        System.out.println(channels);
 
-            //step1。创建Task
-            String taskIdResult = TaskCreateService.getCarrierTasks(new Account(
-                    TestDataConstants.account,
-                    TestDataConstants.password,
-                    TestDataConstants.userId,
-                    TestDataConstants.origin,
-                    TestDataConstants.realName,
-                    TestDataConstants.idCard,
-                    TestDataConstants.loginType));
-            JSONObject taskIdJson = (JSONObject) JSON.parse(taskIdResult);
-            taskId = (String)taskIdJson.get("task_id");
-            System.out.println("任务创建成功: " + taskId);
+        //step1。创建Task
+        String taskIdResult = TaskCreateService.getCarrierTasks(new Account(
+                TestDataConstants.account,
+                TestDataConstants.password,
+                TestDataConstants.userId,
+                TestDataConstants.origin,
+                TestDataConstants.realName,
+                TestDataConstants.idCard,
+                TestDataConstants.loginType));
+        JSONObject taskIdJson = (JSONObject) JSON.parse(taskIdResult);
+        taskId = (String)taskIdJson.get("task_id");
+        System.out.println("任务创建成功: " + taskId);
 
-            //step2。轮询查询Task，并测试验证码
-            TaskCreateService.getCarrierTaskStatus(taskId);
+        //step2。轮询查询Task，并测试验证码
+        TaskCreateService.getCarrierTaskStatus(taskId);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 

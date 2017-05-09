@@ -1,27 +1,28 @@
 package com.moxie.sdk.common;
 
+import com.moxie.sdk.entity.MoxieResponse;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by MX on 2017/4/26.
- * 通过简单的URLConnection发送Get和Post方法
+ * Created by FUFAN on 2017/5/9.
  */
-public class WebUtils {
+public class MoxieWebUtils {
+
     private static final String  DEFAULT_CHARSET = "UTF-8";
     private static final String METHOD_POST = "POST";
     private static final String METHOD_GET = "GET";
 
     private static final Map<String,String> map = new HashMap<String, String>();
 
-    private WebUtils(){}
+    private MoxieWebUtils(){}
 
     /**
      * 向指定URL发送GET方法的请求
@@ -36,7 +37,8 @@ public class WebUtils {
      *            返回的流是否压缩
      * @return URL所代表远程资源的响应
      */
-    public static Map<String,String> doGet(String url, String param, boolean isApiKey, boolean isGzip) {
+    public static MoxieResponse doGet(String url, String param, boolean isApiKey, boolean isGzip) {
+        MoxieResponse moxieResponse = new MoxieResponse();
         String result = "";
         BufferedReader in = null;
         try {
@@ -57,8 +59,8 @@ public class WebUtils {
             // 建立实际的连接
             httpURLConnection.connect();
             // 定义BufferedReader输入流来读取URL的响应
-            map.put("httpStatusCode", String.valueOf(httpURLConnection.getResponseCode()));
-            map.put("httpStatusMsg", httpURLConnection.getResponseMessage());
+            moxieResponse.setHttpStatusCode(httpURLConnection.getResponseCode());
+            moxieResponse.setHttpStatusMsg(httpURLConnection.getResponseMessage());
 
             if(isGzip)
                 result = GzipUtil.uncompress(httpURLConnection.getInputStream());
@@ -86,8 +88,8 @@ public class WebUtils {
                 ex.printStackTrace();
             }
         }
-        map.put("result", result);
-        return map;
+        moxieResponse.setResult(result);
+        return moxieResponse;
     }
     /**
      * 向指定URL发送POST方法的请求
@@ -98,7 +100,8 @@ public class WebUtils {
      *            请求参数:raw。
      * @return URL所代表远程资源的响应
      */
-    public static Map<String, String> doPost(String url, String param) {
+    public static MoxieResponse doPost(String url, String param) {
+        MoxieResponse moxieResponse = new MoxieResponse();
         PrintWriter out = null;
         BufferedReader in = null;
         String result = "";
@@ -120,10 +123,11 @@ public class WebUtils {
             out.print(param);
             // flush输出流的缓冲
             out.flush();
-            // 定义BufferedReader输入流来读取URL的响应
 
-            map.put("httpStatusCode", String.valueOf(httpURLConnection.getResponseCode()));
-            map.put("httpStatusMsg", httpURLConnection.getResponseMessage());
+            moxieResponse.setHttpStatusCode(httpURLConnection.getResponseCode());
+            moxieResponse.setHttpStatusMsg(httpURLConnection.getResponseMessage());
+
+            // 定义BufferedReader输入流来读取URL的响应
             in = new BufferedReader(
                     new InputStreamReader(httpURLConnection.getInputStream()));
             String line;
@@ -148,8 +152,8 @@ public class WebUtils {
                 ex.printStackTrace();
             }
         }
-        map.put("result", result);
-        return map;
+        moxieResponse.setResult(result);
+        return moxieResponse;
     }
 
     public static String handleMap(Map<String,String> map){
@@ -161,6 +165,4 @@ public class WebUtils {
         }
         return "";
     }
-
-
 }
